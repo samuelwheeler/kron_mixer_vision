@@ -59,6 +59,9 @@ class KronMixer(nn.Module):
         patch_dim = channels * patch_height * patch_width
         self.to_patch_embedding = nn.Sequential(
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = patch_height, p2 = patch_width))
+        
+        print('num_patches ', num_patches)
+        print('patch_dim ', patch_dim)
 
                 
         layers = []
