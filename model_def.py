@@ -36,6 +36,7 @@ class multi_head_kron(nn.Module):
         x = self.mat1(x)
         x = rearrange(x, 'b l (h d) -> b h l d', h = self.heads)
         print('before  ', x.shape)
+        print('mat2 ', self.mat2.shape)
         x = torch.matmul(x, self.mat2)
         print('after  ', x.shape)
         x = torch.sum(x, dim = 1)
