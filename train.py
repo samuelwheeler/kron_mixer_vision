@@ -1,4 +1,4 @@
-from model import KronMixer
+import model.KronMixer as KronMixer
 import torch
 import torch.nn as nn
 import torch.optim as optim
