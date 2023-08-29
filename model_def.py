@@ -35,7 +35,9 @@ class multi_head_kron(nn.Module):
     def forward(self, x):
         x = self.mat1(x)
         x = rearrange(x, 'b (h d) l -> b h d l', h = self.heads)
+        print('before  ', x.shape)
         x = torch.matmul(x, self.mat2)
+        print('after  ', x.shape)
         x = torch.sum(x, dim = 1)
         x = x + self.bias
         x = self.bn(x)

@@ -17,14 +17,13 @@ from autoaugment import CIFAR10Policy
 # torch.cuda.device(1)
 torch.manual_seed(4525)
 # set hyperparameters and initial conditions
-batch_size = 512
+batch_size = 2048
 image_size = (32,32)
 patch_size = (4,4)
 channels = 3
 numblocks = 8
 heads = 4
 dropout = 0.1
-state_path = 'multi_head_q.pth'
 epochs = 200
 initial_lr = 1e-3
 pre_layers = 2
@@ -38,12 +37,10 @@ print(device)
 
 model = model_def.KronMixer(image_size = image_size, patch_size = patch_size, num_classes = 10, dim_l = 64, dim_d = 48, depth = numblocks, heads = heads, channels = channels)
 
-model= nn.DataParallel(model)
+# model = nn.DataParallel(model)
 model = model.to(device)
 # optimizer = optim.Adam(model.parameters(), lr = initial_lr, betas=(0.9, 0.99))
 
-for name, param in model.named_parameters():
-    print(name, param.device)
 
 optimizer = optim.Adam(model.parameters(), lr = initial_lr, betas=(0.9, 0.99), weight_decay = 5e-5)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max= epochs, eta_min= 1e-6)
