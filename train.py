@@ -14,7 +14,7 @@ from torch.optim.lr_scheduler import MultiStepLR
 from autoaugment import CIFAR10Policy
 #import warmup_scheduler
 
-
+# torch.cuda.device(1)
 torch.manual_seed(4525)
 # set hyperparameters and initial conditions
 batch_size = 512
@@ -41,6 +41,9 @@ model = model_def.KronMixer(image_size = image_size, patch_size = patch_size, nu
 model= nn.DataParallel(model)
 model = model.to(device)
 # optimizer = optim.Adam(model.parameters(), lr = initial_lr, betas=(0.9, 0.99))
+
+for name, param in model.named_parameters():
+    print(name, param.device)
 
 optimizer = optim.Adam(model.parameters(), lr = initial_lr, betas=(0.9, 0.99), weight_decay = 5e-5)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max= epochs, eta_min= 1e-6)
