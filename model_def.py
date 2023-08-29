@@ -58,9 +58,9 @@ class KronMixer(nn.Module):
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = patch_height, p2 = patch_width))
                 
         layers = []
-        for _ in range(depth - 1):
+        for _ in range(depth):
             layers.append(multi_head_kron(patch_dim, patch_dim, num_patches, num_patches, heads))
-        layers.append(multi_head_kron(patch_dim, dim_l, num_patches, dim_d, heads))
+        self.transfer_layer = (multi_head_kron(patch_dim, dim_d, num_patches, dim_l, heads))
 
         self.layers = nn.ModuleList(layers)
 
@@ -76,5 +76,7 @@ class KronMixer(nn.Module):
         for layer in self.layers:
             x = layer(x) + x
             # x = self.dropout(x)
+        x = self.transfer_layer(x)
         x = rearrange(x, 'b n d -> b (n d)')
-        return self.mlp_head(x)
+        x = self.mlp_head(x)
+        return x
