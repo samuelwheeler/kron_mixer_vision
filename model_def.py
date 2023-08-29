@@ -30,7 +30,7 @@ class multi_head_kron(nn.Module):
         self.mat2 = nn.Parameter(torch.randn(heads, l_in, l_out) * (1/l_in))
         self.activation = nn.ReLU()
         self.bias = nn.Parameter(torch.zeros(l_out, dim_out))
-        self.bn = nn.BatchNorm1d(dim_out)
+        self.bn = nn.BatchNorm1d(l_out)
 
     def forward(self, x):
         x = self.mat1(x)
@@ -70,9 +70,8 @@ class KronMixer(nn.Module):
         
 
     def forward(self, img):
-        print('input ', img.shape)
         x = self.to_patch_embedding(img)
-        print('after patch embedding ', x.shape)
+
         
         for layer in self.layers:
             x = layer(x) + x
