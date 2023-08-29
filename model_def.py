@@ -34,7 +34,7 @@ class multi_head_kron(nn.Module):
 
     def forward(self, x):
         x = self.mat1(x)
-        x = rearrange(x, 'b (h d) l -> b h d l', h = self.heads)
+        x = rearrange(x, 'b l (h d) -> b h l d', h = self.heads)
         print('before  ', x.shape)
         x = torch.matmul(x, self.mat2)
         print('after  ', x.shape)
