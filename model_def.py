@@ -60,10 +60,7 @@ class KronMixer(nn.Module):
         self.to_patch_embedding = nn.Sequential(
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = patch_height, p2 = patch_width))
 
-        
-        
-        self.dropout = nn.Dropout(dropout)
-        
+                
         layers = []
         for _ in range(depth - 1):
             layers.append(multi_head_kron(patch_dim, patch_dim, num_patches, num_patches, heads))
