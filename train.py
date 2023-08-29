@@ -4,16 +4,12 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
-import numpy as np
 import torchvision
 import torchvision.transforms as transforms
 from einops import rearrange, repeat
 from einops.layers.torch import Rearrange
-import math
-import os
 import time
 from tqdm import tqdm
-import pandas as pd
 from torch.optim.lr_scheduler import MultiStepLR
 from autoaugment import CIFAR10Policy
 #import warmup_scheduler
