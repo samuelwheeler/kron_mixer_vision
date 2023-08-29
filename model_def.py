@@ -35,10 +35,7 @@ class multi_head_kron(nn.Module):
     def forward(self, x):
         x = self.mat1(x)
         x = rearrange(x, 'b l (h d) -> b h l d', h = self.heads)
-        print('before  ', x.shape)
-        print('mat2 ', self.mat2.shape)
-        x = torch.matmul(x, self.mat2)
-        print('after  ', x.shape)
+        x = torch.matmul(self.mat2, x)
         x = torch.sum(x, dim = 1)
         x = x + self.bias
         x = self.bn(x)
@@ -59,10 +56,6 @@ class KronMixer(nn.Module):
         patch_dim = channels * patch_height * patch_width
         self.to_patch_embedding = nn.Sequential(
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = patch_height, p2 = patch_width))
-        
-        print('num_patches ', num_patches)
-        print('patch_dim ', patch_dim)
-
                 
         layers = []
         for _ in range(depth - 1):
