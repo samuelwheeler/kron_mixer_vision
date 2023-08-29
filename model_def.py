@@ -73,7 +73,9 @@ class KronMixer(nn.Module):
         
 
     def forward(self, img):
+        print('input ', img.shape)
         x = self.to_patch_embedding(img)
+        print('after patch embedding ', x.shape)
         
         for layer in self.layers:
             x = layer(x) + x
