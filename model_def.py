@@ -27,7 +27,7 @@ class multi_head_kron(nn.Module):
         self.heads = heads
         self.mat1 = nn.Linear(dim_in, heads * dim_out, bias = False)
         self.mat1.weight = nn.Parameter(torch.randn(heads * dim_in, dim_out) * (1/dim_in))
-        self.mat2 = nn.Parameter(torch.randn(heads, l_in, l_out)) * (1/l_in)
+        self.mat2 = nn.Parameter(torch.randn(heads, l_in, l_out) * (1/l_in))
         self.activation = nn.ReLU()
         self.bias = nn.Parameter(torch.zeros(l_out, dim_out))
         self.bn = nn.BatchNorm1d(dim_out)
