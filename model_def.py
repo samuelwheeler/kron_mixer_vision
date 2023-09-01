@@ -22,7 +22,7 @@ class PreNorm(nn.Module):
 
 
 class multi_head_kron(nn.Module):
-    def __init__(self, dim_in, dim_out, l_in, l_out, heads):
+    def __init__(self, dim_in, dim_out, l_in, l_out, heads, layer_num = 0):
         super().__init__()
         self.heads = heads
         self.mat1 = nn.Linear(dim_in, heads * dim_out, bias = False)
@@ -31,23 +31,18 @@ class multi_head_kron(nn.Module):
         self.activation = nn.ReLU()
         self.bias = nn.Parameter(torch.zeros(l_out, dim_out))
         self.bn = nn.BatchNorm1d(l_out)
+        self.layer_num = layer_num
 
     def forward(self, x):
-        print(f'incoming var: {torch.var(x)}')
-        print(f'intial x shape: {x.shape}')
+        print(f'incoming var at layer {self.layer_num}: {torch.var(x)}')
         x = self.mat1(x)
-        print(f'x shape after mat1: {x.shape}')
         x = rearrange(x, 'b l (h d) -> b h l d', h = self.heads)
-        print(f'x shape after rearrange: {x.shape}')
         x = torch.matmul(self.mat2, x)
-        print(f'x shape after mat2: {x.shape}')
         x = torch.sum(x, dim = 1)
-        print(f'x shape after sum: {x.shape}')
-        print(f'shape of bias: {self.bias.shape}')
         x = x + self.bias
         x = self.bn(x)
         x = self.activation(x)
-        print(f'outgoing var:  {torch.var(x)}')
+        print(f'outgoing var at layer {self.layer_num}:  {torch.var(x)}')
         return x
 
         
@@ -66,9 +61,9 @@ class KronMixer(nn.Module):
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = patch_height, p2 = patch_width))
                 
         layers = []
-        for _ in range(depth):
-            layers.append(multi_head_kron(patch_dim, patch_dim, num_patches, num_patches, heads))
-        self.transfer_layer = (multi_head_kron(patch_dim, dim_d, num_patches, dim_l, heads))
+        for i in range(depth):
+            layers.append(multi_head_kron(patch_dim, patch_dim, num_patches, num_patches, heads, layer_num = i))
+        self.transfer_layer = (multi_head_kron(patch_dim, dim_d, num_patches, dim_l, heads, layer_num = depth))
 
         self.layers = nn.ModuleList(layers)
 
