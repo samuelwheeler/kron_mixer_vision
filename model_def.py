@@ -30,7 +30,7 @@ class multi_head_kron(nn.Module):
         self.mat2 = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads,l_in, l_out), a = -(3**0.5), b = 3**0.5) * ((2 ** 0.4) / (l_in * (heads ** 0.5)) ** 0.5))
         self.activation = nn.ReLU()
         self.bias = nn.Parameter(torch.zeros(l_out, dim_out))
-        # self.bn = nn.BatchNorm1d(l_out)
+        self.bn = nn.BatchNorm1d(l_out)
         self.layer_num = layer_num
 
     def forward(self, x):
@@ -76,7 +76,8 @@ class KronMixer(nn.Module):
         print(f'original var: {torch.var(x)}')
         
         for layer in self.layers:
-            x = (layer(x) + x)/(2 ** 0.5)
+            x = (layer(x) + x)
+            x = layer.bn(x)
             # x = self.dropout(x)
         x = self.transfer_layer(x)
         x = rearrange(x, 'b n d -> b (n d)')
