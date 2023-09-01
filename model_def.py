@@ -26,7 +26,7 @@ class multi_head_kron(nn.Module):
         super().__init__()
         self.heads = heads
         self.mat1 = nn.Linear(dim_in, heads * dim_out, bias = False)
-        self.mat1.weight = nn.Parameter(torch.nn.init.uniform_(torch.randn(dim_out, heads * dim_in), a = -(3**0.5), b = 3**0.5) * ((2/dim_in)**0.5) * (1/heads **0.5))
+        self.mat1.weight = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads * dim_in, dim_out), a = -(3**0.5), b = 3**0.5) * ((2/dim_in)**0.5) * (1/heads **0.5))
         self.mat2 = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads * l_in, l_out), a = -(3**0.5), b = 3**0.5) * ((2/l_in)**0.5) * (1/heads **0.5))
         self.activation = nn.ReLU()
         self.bias = nn.Parameter(torch.zeros(l_out, dim_out))
@@ -34,11 +34,15 @@ class multi_head_kron(nn.Module):
 
     def forward(self, x):
         print(f'incoming var: {torch.var(x)}')
+        print(f'intial x shape: {x.shape}')
         x = self.mat1(x)
+        print(f'x shape after mat1: {x.shape}')
         x = rearrange(x, 'b l (h d) -> b h l d', h = self.heads)
+        print(f'x shape after rearrange: {x.shape}')
         x = torch.matmul(self.mat2, x)
+        print(f'x shape after mat2: {x.shape}')
         x = torch.sum(x, dim = 1)
-        print(f'shape of x: {x.shape}')
+        print(f'x shape after sum: {x.shape}')
         print(f'shape of bias: {self.bias.shape}')
         x = x + self.bias
         x = self.bn(x)
