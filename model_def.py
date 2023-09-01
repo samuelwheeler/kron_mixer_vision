@@ -33,15 +33,17 @@ class multi_head_kron(nn.Module):
         self.bn = nn.BatchNorm1d(l_out)
 
     def forward(self, x):
-        print('incoming var  ', torch.var(x))
+        print(f'incoming var: {torch.var(x)}')
         x = self.mat1(x)
         x = rearrange(x, 'b l (h d) -> b h l d', h = self.heads)
         x = torch.matmul(self.mat2, x)
         x = torch.sum(x, dim = 1)
+        print(f'shape of x: {x.shape}')
+        print(f'shape of bias: {self.bias.shape}')
         x = x + self.bias
         x = self.bn(x)
         x = self.activation(x)
-        print('outgoing var  ', torch.var(x))
+        print(f'outgoing var:  {torch.var(x)}')
         return x
 
         
