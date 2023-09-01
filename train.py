@@ -37,7 +37,7 @@ print(device)
 
 model = model_def.KronMixer(image_size = image_size, patch_size = patch_size, num_classes = 10, dim_l = 64, dim_d = 48, depth = numblocks, heads = heads, channels = channels)
 
-model = nn.DataParallel(model)
+# model = nn.DataParallel(model)
 model = model.to(device)
 # optimizer = optim.Adam(model.parameters(), lr = initial_lr, betas=(0.9, 0.99))
 
