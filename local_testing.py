@@ -36,13 +36,4 @@ class multi_head_kron(nn.Module):
         print(f'outgoing var at layer {self.layer_num}:  {torch.var(x)}')
         return x
 
-        
-x = torch.randn(3, 100, 100) * 2**0.5
-
-model = multi_head_kron(100, 100, 100, 100, 4)
-
-print(torch.var(x))
-
-y = model(x)
-
-print(torch.var(y))
+      
