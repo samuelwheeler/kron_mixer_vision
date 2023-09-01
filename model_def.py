@@ -41,6 +41,7 @@ class multi_head_kron(nn.Module):
         x = torch.sum(x, dim = 1)
         x = x + self.bias
         # x = self.bn(x)
+        print(f'pre activation var at layer {self.layer_num}: {torch.var(x)}')
         x = self.activation(x)
         print(f'outgoing var at layer {self.layer_num}:  {torch.var(x)}')
         return x
