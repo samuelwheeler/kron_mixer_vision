@@ -27,7 +27,8 @@ class multi_head_kron(nn.Module):
         self.heads = heads
         self.mat1 = nn.Linear(dim_in, heads * dim_out, bias = False)
         self.mat1.weight = nn.Parameter(torch.nn.init.uniform_(torch.randn( heads * dim_out, dim_in), a = -(3**0.5), b = 3**0.5) * ((2 ** 0.4) / (dim_in * (heads ** 0.5)) ** 0.5))
-        self.mat2 = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads, l_out, l_in), a = -(3**0.5), b = 3**0.5) * ((2 ** 0.4) / (l_in * (heads ** 0.5)) ** 0.5))
+        # self.mat2 = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads, l_out, l_in), a = -(3**0.5), b = 3**0.5) * ((2 ** 0.4) / (l_in * (heads ** 0.5)) ** 0.5))
+        self.mat2 = nn.Parameter(torch.nn.rand(heads, l_out, l_in))
         self.activation = nn.ReLU()
         self.bias = nn.Parameter(torch.zeros(l_out, dim_out))
         self.ln = nn.LayerNorm(dim_out)
