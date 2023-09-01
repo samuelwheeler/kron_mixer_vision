@@ -30,7 +30,7 @@ class multi_head_kron(nn.Module):
         self.mat2 = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads,l_in, l_out), a = -(3**0.5), b = 3**0.5) * ((2 ** 0.4) / (l_in * (heads ** 0.5)) ** 0.5))
         self.activation = nn.ReLU()
         self.bias = nn.Parameter(torch.zeros(l_out, dim_out))
-        self.bn = nn.BatchNorm1d(l_out)
+        self.ln = nn.LayerNorm(dim_out)
         self.layer_num = layer_num
 
     def forward(self, x):
@@ -68,16 +68,18 @@ class KronMixer(nn.Module):
 
 
         self.mlp_head = nn.Linear(dim_l*dim_d, num_classes)
+        self.ln = nn.LayerNorm(num_patches)
             
         
 
     def forward(self, img):
         x = self.to_patch_embedding(img)
         print(f'original var: {torch.var(x)}')
-        
+        x = self.ln(x)
+        print(f'var after ln: {torch.var(x)}')
         for layer in self.layers:
-            x = (layer(x) + x)
-            x = layer.bn(x)
+            x = layer(x)
+            # x = layer.ln(x)
             # x = self.dropout(x)
         x = self.transfer_layer(x)
         x = rearrange(x, 'b n d -> b (n d)')
