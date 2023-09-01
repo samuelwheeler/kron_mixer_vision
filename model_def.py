@@ -61,7 +61,7 @@ class KronMixer(nn.Module):
         layers = []
         for i in range(depth):
             layers.append(multi_head_kron(patch_dim, patch_dim, num_patches, num_patches, heads, layer_num = i))
-        self.transfer_layer = (multi_head_kron(patch_dim, dim_d, num_patches, dim_l, heads, layer_num = depth))
+        self.transfer_layer = (multi_head_kron(patch_dim, dim_d, num_patches, dim_l, 2 * heads, layer_num = depth))
 
         self.layers = nn.ModuleList(layers)
 
