@@ -68,7 +68,7 @@ class KronMixer(nn.Module):
 
 
         self.mlp_head = nn.Linear(dim_l*dim_d, num_classes)
-        self.ln = nn.LayerNorm(num_patches)
+        self.ln = nn.LayerNorm(patch_dim)
             
         
 
