@@ -80,7 +80,7 @@ class KronMixer(nn.Module):
         print(f'original var: {torch.var(x)}')
         
         for layer in self.layers:
-            x = layer(x) + x
+            x = (layer(x) + x)/(2 ** 0.5)
             # x = self.dropout(x)
         x = self.transfer_layer(x)
         x = rearrange(x, 'b n d -> b (n d)')
