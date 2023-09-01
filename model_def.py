@@ -34,6 +34,8 @@ class multi_head_kron(nn.Module):
         self.layer_num = layer_num
 
     def forward(self, x):
+        print(f'incoming mean at layer {self.layer_num}: {torch.mean(x)}')
+        print(f'incoming median at layer {self.layer_num}: {torch.median(x)}')
         print(f'incoming var at layer {self.layer_num}: {torch.var(x)}')
         x = self.mat1(x)
         x = rearrange(x, 'b l (h d) -> b h l d', h = self.heads)
