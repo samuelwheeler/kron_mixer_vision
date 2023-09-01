@@ -30,7 +30,7 @@ class multi_head_kron(nn.Module):
         self.mat2 = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads,l_in, l_out), a = -(3**0.5), b = 3**0.5) * ((2/l_in)**0.5))
         self.activation = nn.ReLU()
         self.bias = nn.Parameter(torch.zeros(l_out, dim_out))
-        self.bn = nn.BatchNorm1d(l_out)
+        # self.bn = nn.BatchNorm1d(l_out)
         self.layer_num = layer_num
 
     def forward(self, x):
@@ -40,7 +40,7 @@ class multi_head_kron(nn.Module):
         x = torch.matmul(self.mat2, x)
         x = torch.sum(x, dim = 1)
         x = x + self.bias
-        x = self.bn(x)
+        # x = self.bn(x)
         x = self.activation(x)
         print(f'outgoing var at layer {self.layer_num}:  {torch.var(x)}')
         return x
