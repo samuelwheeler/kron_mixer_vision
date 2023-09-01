@@ -26,9 +26,8 @@ class multi_head_kron(nn.Module):
         super().__init__()
         self.heads = heads
         self.mat1 = nn.Linear(dim_in, heads * dim_out, bias = False)
-        # self.mat1.weight = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads * dim_in, dim_out), a = -(3**0.5), b = 3**0.5) * ((2 ** 0.4) / (dim_in * (heads ** 0.5)) ** 0.5))
-        # self.mat2 = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads,l_in, l_out), a = -(3**0.5), b = 3**0.5) * ((2 ** 0.4) / (l_in * (heads ** 0.5)) ** 0.5))
-        self.mat2 = nn.Parameter(torch.randn(heads, l_in, l_out))
+        self.mat1.weight = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads * dim_in, dim_out), a = -(3**0.5), b = 3**0.5) * ((2 ** 0.4) / (dim_in * (heads ** 0.5)) ** 0.5))
+        self.mat2 = nn.Parameter(torch.nn.init.uniform_(torch.randn(heads,l_in, l_out), a = -(3**0.5), b = 3**0.5) * ((2 ** 0.4) / (l_in * (heads ** 0.5)) ** 0.5))
         self.activation = nn.ReLU()
         self.bias = nn.Parameter(torch.zeros(l_out, dim_out))
         self.ln = nn.LayerNorm(dim_out)
@@ -40,7 +39,7 @@ class multi_head_kron(nn.Module):
         x = torch.matmul(self.mat2, x)
         x = torch.sum(x, dim = 1)
         x = x + self.bias
-        # x = self.ln(x)
+        x = self.ln(x)
         x = self.activation(x)
         return x
 
@@ -73,7 +72,7 @@ class KronMixer(nn.Module):
         x = self.to_patch_embedding(img)
         for layer in self.layers:
             x = layer(x) + x
-            x = layer.ln(x)
+            # x = layer.ln(x)
         x = self.transfer_layer(x)
         x = rearrange(x, 'b n d -> b (n d)')
         x = self.mlp_head(x)
