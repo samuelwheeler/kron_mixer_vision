@@ -34,13 +34,12 @@ class multi_head_kron(nn.Module):
         self.layer_num = layer_num
 
     def forward(self, x):
-        print(f'incoming var at layer {self.layer_num}: {torch.var(x)}')
         x = self.mat1(x)
         x = rearrange(x, 'b l (h d) -> b h l d', h = self.heads)
         x = torch.matmul(self.mat2, x)
         x = torch.sum(x, dim = 1)
         x = x + self.bias
-        # x = self.bn(x)
+        # x = self.ln(x)
         x = self.activation(x)
         return x
 
@@ -68,19 +67,12 @@ class KronMixer(nn.Module):
 
 
         self.mlp_head = nn.Linear(dim_l*dim_d, num_classes)
-        self.ln = nn.LayerNorm(patch_dim)
-            
-        
 
     def forward(self, img):
         x = self.to_patch_embedding(img)
-        print(f'original var: {torch.var(x)}')
-        x = self.ln(x)
-        print(f'var after ln: {torch.var(x)}')
         for layer in self.layers:
-            x = layer(x)
-            # x = layer.ln(x)
-            # x = self.dropout(x)
+            x = layer(x) + x
+            x = layer.ln(x)
         x = self.transfer_layer(x)
         x = rearrange(x, 'b n d -> b (n d)')
         x = self.mlp_head(x)
