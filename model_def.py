@@ -75,7 +75,7 @@ class KronMixer(nn.Module):
 
     def forward(self, img):
         x = self.to_patch_embedding(img)
-
+        print(f'original var: {torch.var(x)}')
         
         for layer in self.layers:
             x = layer(x) + x
