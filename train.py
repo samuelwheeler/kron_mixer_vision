@@ -29,7 +29,7 @@ initial_lr = 1e-3
 pre_layers = 2
 warmup_epoch = 5
 mlp_dim = 32
-model_dim = 512
+model_dim = 128
 
 
 # device 
