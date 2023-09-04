@@ -44,12 +44,10 @@ class multi_head_kron(nn.Module):
         self.layer_num = layer_num
 
     def forward(self, x):
-        out = self.mat1(x)
+        x = self.mat1(x)
         x = rearrange(x, 'b l (h d) -> b h l d', h = self.heads)
         x = torch.matmul(self.mat2, x)
         x = torch.sum(x, dim = 1)
-        print(x.shape)
-        print(self.bias.shape)
         x = x + self.bias
         # x = self.ln(x)
         # x = self.activation(x)
