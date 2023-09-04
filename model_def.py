@@ -57,7 +57,7 @@ class multi_head_kron(nn.Module):
 
 
 class KronMixer(nn.Module):
-    def __init__(self, *, patch_size, num_classes, dim_l, mlp_dim_scale, depth, heads, channels = 3):
+    def __init__(self, *, patch_size, num_classes, model_dim, mlp_dim_scale, depth, heads, channels = 3):
         super().__init__()
 
         patch_height, patch_width = patch_size
@@ -70,19 +70,26 @@ class KronMixer(nn.Module):
         self.layers = nn.ModuleList([])
         for i in range(depth):
                 self.layers.append(nn.Sequential(
-                    nn.LayerNorm(patch_dim),
-                    multi_head_kron(patch_dim, patch_dim, num_patches + 1, num_patches + 1, heads, layer_num = i)
+                    nn.LayerNorm(model_dim),
+                    multi_head_kron(model_dim, model_dim, num_patches + 1, num_patches + 1, heads, layer_num = i)
                     ))
                 self.layers.append(nn.Sequential(
-                    nn.LayerNorm(patch_dim),
-                    FeedForward(patch_dim, mlp_dim_scale * patch_dim)
+                    nn.LayerNorm(model_dim),
+                    FeedForward(model_dim, mlp_dim_scale * model_dim)
                     ))
                 
-        self.mlp_head = nn.Linear(patch_dim, num_classes)
-        self.cls_token = nn.Parameter(torch.randn(1, 1, patch_dim))
+        self.mlp_head = nn.Linear(model_dim, num_classes)
+        self.cls_token = nn.Parameter(torch.randn(1, 1, model_dim))
+
+        self.to_model_dim = nn.Sequential(
+            nn.Linear(patch_dim, model_dim),
+            nn.GELU(),
+            nn.Linear(model_dim, model_dim),
+        )
 
     def forward(self, img):
         x = self.to_patch_embedding(img)
+        x = self.to_model_dim(x)
         b, l, d = x.shape
         cls_tokens = repeat(self.cls_token, '() l d -> b l d', b = b)
         x = torch.cat((cls_tokens, x), dim=1)
