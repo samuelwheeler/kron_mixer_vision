@@ -69,11 +69,11 @@ class KronMixer(nn.Module):
                 
         self.layers = nn.ModuleList([])
         for i in range(depth):
-                self.layers.append(nn.ModuleList([
+                self.layers.append(nn.Sequential([
                     nn.LayerNorm(patch_dim),
                     multi_head_kron(patch_dim, patch_dim, num_patches + 1, num_patches + 1, heads, layer_num = i)
                     ]))
-                self.layers.append(nn.ModuleList([
+                self.layers.append(nn.Sequential([
                     nn.LayerNorm(patch_dim),
                     FeedForward(patch_dim, mlp_dim_scale * patch_dim)
                     ]))
@@ -85,9 +85,10 @@ class KronMixer(nn.Module):
     def forward(self, img):
         x = self.to_patch_embedding(img)
         b, l, d = x.shape
-        print(x.shape)
+        print('first shape:  ', x.shape)
         cls_tokens = repeat(self.cls_token, '() l d -> b l d', b = b)
         x = torch.cat((cls_tokens, x), dim=1)
+        print('second shape:  ', x.shape)
 
         for layer in self.layers:
             x = layer(x) + x
