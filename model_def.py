@@ -81,11 +81,11 @@ class KronMixer(nn.Module):
         self.mlp_head = nn.Linear(model_dim, num_classes)
         self.cls_token = nn.Parameter(torch.randn(1, 1, model_dim))
 
-        self.to_model_dim = nn.Sequential(
-            nn.Linear(patch_dim, model_dim),
-            nn.GELU(),
-            nn.Linear(model_dim, model_dim),
-        )
+        # self.to_model_dim = nn.Sequential(
+        #     nn.Linear(patch_dim, model_dim),
+        #     nn.GELU(),
+        #     nn.Linear(model_dim, model_dim),
+        # )
 
         #print the number of parameters for each layer module in the model:
         for name, module in self.named_modules():
@@ -93,7 +93,7 @@ class KronMixer(nn.Module):
 
     def forward(self, img):
         x = self.to_patch_embedding(img)
-        x = self.to_model_dim(x)
+        # x = self.to_model_dim(x)
         b, l, d = x.shape
         cls_tokens = repeat(self.cls_token, '() l d -> b l d', b = b)
         x = torch.cat((cls_tokens, x), dim=1)
