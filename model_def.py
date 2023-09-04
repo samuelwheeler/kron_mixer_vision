@@ -48,6 +48,8 @@ class multi_head_kron(nn.Module):
         x = rearrange(x, 'b l (h d) -> b h l d', h = self.heads)
         x = torch.matmul(self.mat2, x)
         x = torch.sum(x, dim = 1)
+        print(x.shape)
+        print(self.bias.shape)
         x = x + self.bias
         # x = self.ln(x)
         # x = self.activation(x)
