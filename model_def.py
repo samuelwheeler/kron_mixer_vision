@@ -62,6 +62,7 @@ class KronMixer(nn.Module):
 
         patch_height, patch_width = patch_size
         patch_dim = channels * patch_height * patch_width
+        num_patches = (32 // patch_height) * (32 // patch_width)
 
         self.to_patch_embedding = nn.Sequential(
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1 = patch_height, p2 = patch_width))
@@ -70,7 +71,7 @@ class KronMixer(nn.Module):
         for i in range(depth):
                 self.layers.append(nn.ModuleList([
                     nn.LayerNorm(patch_dim),
-                    multi_head_kron(patch_dim, patch_dim, dim_l, dim_l, heads, layer_num = i)
+                    multi_head_kron(patch_dim, patch_dim, num_patches + 1, num_patches + 1, heads, layer_num = i)
                     ]))
                 self.layers.append(nn.ModuleList([
                     nn.LayerNorm(patch_dim),
@@ -78,7 +79,7 @@ class KronMixer(nn.Module):
                     ]))
                 
         self.mlp_head = nn.Linear(patch_dim, num_classes)
-        self.cls_token = nn.Parameter(torch.randn(1, 1, dim_l))
+        self.cls_token = nn.Parameter(torch.randn(1, 1, patch_dim))
 
 
     def forward(self, img):
