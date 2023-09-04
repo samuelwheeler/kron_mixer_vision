@@ -37,7 +37,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 
 
-model = model_def.KronMixer(patch_size = patch_size, num_classes = 10, model_dim = model_dim, depth = numblocks, mlp_dim_scale = 2,  heads = heads, channels = channels)
+model = model_def.KronMixer(patch_size = patch_size, num_classes = 10, model_dim = model_dim, depth = numblocks, mlp_dim_scale = 1,  heads = heads, channels = channels)
 
 model = nn.DataParallel(model)
 model = model.to(device)
