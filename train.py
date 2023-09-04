@@ -17,7 +17,7 @@ from autoaugment import CIFAR10Policy
 # torch.cuda.device(1)
 torch.manual_seed(4525)
 # set hyperparameters and initial conditions
-batch_size = 2048
+batch_size = 512
 image_size = (32,32)
 patch_size = (4,4)
 channels = 3
