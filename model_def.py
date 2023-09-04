@@ -69,14 +69,14 @@ class KronMixer(nn.Module):
                 
         self.layers = nn.ModuleList([])
         for i in range(depth):
-                self.layers.append(nn.Sequential([
+                self.layers.append(nn.Sequential(
                     nn.LayerNorm(patch_dim),
                     multi_head_kron(patch_dim, patch_dim, num_patches + 1, num_patches + 1, heads, layer_num = i)
-                    ]))
-                self.layers.append(nn.Sequential([
+                    ))
+                self.layers.append(nn.Sequential(
                     nn.LayerNorm(patch_dim),
                     FeedForward(patch_dim, mlp_dim_scale * patch_dim)
-                    ]))
+                    ))
                 
         self.mlp_head = nn.Linear(patch_dim, num_classes)
         self.cls_token = nn.Parameter(torch.randn(1, 1, patch_dim))
