@@ -89,13 +89,12 @@ class KronMixer(nn.Module):
     def forward(self, img):
         x = self.to_patch_embedding(img)
         b, l, d = x.shape
-        print('first shape:  ', x.shape)
         cls_tokens = repeat(self.cls_token, '() l d -> b l d', b = b)
         x = torch.cat((cls_tokens, x), dim=1)
-        print('second shape:  ', x.shape)
-
         for layer in self.layers:
+            print(f'in shape : {x.shape}')
             x = layer(x) + x
+            print(f'out shape : {x.shape}')
         x = x[:, 0]
         x = self.mlp_head(x)
         return x
