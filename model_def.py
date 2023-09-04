@@ -87,6 +87,10 @@ class KronMixer(nn.Module):
             nn.Linear(model_dim, model_dim),
         )
 
+        #print the number of parameters for each layer module in the model:
+        for name, module in self.named_modules():
+            print(name, sum(p.numel() for p in module.parameters()))
+
     def forward(self, img):
         x = self.to_patch_embedding(img)
         x = self.to_model_dim(x)
