@@ -84,6 +84,7 @@ class KronMixer(nn.Module):
     def forward(self, img):
         x = self.to_patch_embedding(img)
         b, l, d = x.shape
+        print(x.shape)
         cls_tokens = repeat(self.cls_token, '() l d -> b l d', b = b)
         x = torch.cat((cls_tokens, x), dim=1)
 
