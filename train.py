@@ -22,7 +22,7 @@ image_size = (32,32)
 patch_size = (4,4)
 channels = 3
 numblocks = 8
-heads = 48
+heads = 512
 dropout = 0.1
 epochs = 200
 initial_lr = 1e-3
@@ -36,7 +36,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 
 
-model = model_def.KronMixer(patch_size = patch_size, num_classes = 10, dim_l = 32, depth = numblocks, mlp_dim_scale = 5,  heads = heads, channels = channels)
+model = model_def.KronMixer(patch_size = patch_size, num_classes = 10, dim_l = 32, depth = numblocks, mlp_dim_scale = 10,  heads = heads, channels = channels)
 
 model = nn.DataParallel(model)
 model = model.to(device)
